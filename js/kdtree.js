@@ -1,6 +1,14 @@
 const k = 2;
 const axes = ['x', 'y'];
 
+/*
+   In reality, a KDTree in JS doesn't yield many performance benefits,
+   especially when taking in to account that all of these particles
+   will be moving at some point, thus forcing a new tree to be constructed
+   on every frame. This was mostly a learning exercise, turned in to a fun
+   visual programming project.
+ */
+
 function makeTree(points, depth = 0) {
   const n = points.length;
 
@@ -13,6 +21,7 @@ function makeTree(points, depth = 0) {
   const medianIdx = Math.floor(n / 2);
 
   // Sort elements by direction of axis we're on
+  // Also clone the array, because JS sorts in place.
   const sorted = [...points].sort((a, b) => a[axis] - b[axis]);
 
   const left = sorted.slice(0, medianIdx);
@@ -102,6 +111,7 @@ const naiveNNS = maxNeighbors => (points, target) => {
   while (neighbors.length < maxNeighbors) {
     const root = makeTree(pointsToSearch);
     const neighbor = kdtreeNearestNeighbor(root, target);
+    /* const neighbor = bruteNS(pointsToSearch, target); */
     pointsToSearch = pointsToSearch.filter(x => x.id !== neighbor.id);
     neighbors.push(neighbor);
   }

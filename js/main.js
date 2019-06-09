@@ -1,21 +1,23 @@
-const N = 100;
+const N = 200;
+const N_NEIGHBORS = 30;
 let points;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  points = Array.from(Array(100)).map((_, idx) =>
+  noSmooth();
+  points = Array.from(Array(N)).map((_, idx) =>
     makePoint(Math.random() * windowWidth, Math.random() * windowHeight, idx)
   );
 }
+window.addEventListener('resize', setup);
 
 function draw() {
   background(36);
   const cursorPoint = makePoint(mouseX, mouseY);
   const root = makeTree(points);
-  /* const { id } = kdtreeNearestNeighbor(root, cursorPoint); */
-  const neighbors = naiveNNS(10)(points, cursorPoint);
-  const neighborIds = neighbors.map(x => x.id);
-  points.forEach(p => drawPoint(p, neighborIds.includes(p.id)));
+  const neighbors = naiveNNS(N_NEIGHBORS)(points, cursorPoint);
+  drawSpider(cursorPoint, neighbors);
+  points.forEach(p => drawPoint(p));
 }
 
 function windowResized() {
